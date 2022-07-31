@@ -1,5 +1,7 @@
 <?php
 
+use Doctrine\DBAL\Driver\PDO\MySQL\Driver;
+
 /**
  * Global Configuration Override
  *
@@ -13,5 +15,29 @@
  */
 
 return [
-    // ...
+      'doctrine' => [
+         'connection' => [
+            'orm_default' => [
+               'driverClass' => Driver::class,
+                  'params' => [
+                     'host'     => '127.0.0.1',                    
+                     'user'     => 'root',
+                     'password' => 'admin123',
+                     'dbname'   => 'album',
+                  ]
+               ],            
+            ],        
+      ],
+    'db' => [
+      'driver'   => 'Pdo',
+      'dsn'      => 'mysql:dbname=album;host=localhost;charset=utf8',
+      'username' => 'root',
+      'password' => 'admin123',
+    ],
+     'service_manager' => array(
+        'factories' => array(
+           'Zend\Db\Adapter\Adapter' => 'Zend\Db\Adapter\AdapterServiceFactory',
+        ),
+     ),
+
 ];

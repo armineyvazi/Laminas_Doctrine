@@ -24,11 +24,17 @@
         "laminas/laminas-mvc-plugins": "^1.1.0",
         "laminas/laminas-mvc-middleware": "^2.0.0",
         "laminas/laminas-session": "^2.10.0",
-        "laminas/laminas-di": "^3.2.2"
+        "laminas/laminas-di": "^3.2.2",
+        "doctrine/doctrine-orm-module": "^5.2",
+        "laminas/laminas-paginator": "^2.13",
+        "doctrine/migrations": "^3.5"
     },
     "autoload": {
         "psr-4": {
-            "Application\\": "module/Application/src/"
+            "Application\\": "module/Application/src/",
+            "Album\\": "module/Album/src/",
+            "User\\": "module/User/src/",
+            "Post\\": "module/Post/src/"
         }
     },
     "autoload-dev": {
