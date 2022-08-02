@@ -27,7 +27,9 @@
         "laminas/laminas-di": "^3.2.2",
         "doctrine/doctrine-orm-module": "^5.2",
         "laminas/laminas-paginator": "^2.13",
-        "doctrine/migrations": "^3.5"
+        "doctrine/migrations": "^3.5",
+        "laminas/laminas-inputfilter": "^2.19",
+        "laminas/laminas-servicemanager": "^3.16"
     },
     "autoload": {
         "psr-4": {

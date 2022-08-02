@@ -2,6 +2,7 @@
 
 namespace Post\Controller\Factory;
 
+use Post\Service\PostManager;
 use Post\Controller\PostController;
 use Interop\Container\ContainerInterface;
 
@@ -12,7 +13,8 @@ class PostControllerFactory implements PostControllerInterface
     {
         // Create an instance of the class.
         $doctrineConfig = $container->get('doctrine.entitymanager.orm_default');
-        return new PostController($doctrineConfig);
+        $postManger=$container->get(PostManager::class,$doctrineConfig);
+        return new PostController($doctrineConfig,$postManger);
 
     }
 }

@@ -3,9 +3,11 @@
 
 namespace Post;
 
+use Post\Service\PostManager;
 use Laminas\Router\Http\Segment;
-use Post\Controller\Factory\PostControllerFactory;
+use Post\Service\Factory\PostMangerFactory;
 use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
+use Post\Controller\Factory\PostControllerFactory;
 use Laminas\ServiceManager\Factory\InvokableFactory;
 
 
@@ -14,6 +16,11 @@ return [
     'controllers' => [
         'factories' => [
             Controller\PostController::class => PostControllerFactory::class ,
+        ]
+    ],
+    'service-manager'=>[
+        'factories'=>[
+            Service\PostManager::class=>PostMangerFactory::class,
         ]
     ],
     // The following section is new and should be added to your file:

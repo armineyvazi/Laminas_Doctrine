@@ -6,22 +6,24 @@ namespace Post\Controller;
 
 use Post\Entity\Post;
 use Post\Form\PostForm;
+use Post\Service\PostManager;
 use Doctrine\ORM\EntityManager;
 use Laminas\View\Model\ViewModel;
 use Laminas\Mvc\Controller\AbstractActionController;
 
 class PostController extends AbstractActionController
 {
+    protected PostManager $postManager;
     protected EntityManager $entityManager;
 
-    public function __construct(EntityManager $entityManager)
+    public function __construct(EntityManager $entityManager, PostManager $postManager)
     {
+        $this->postManager = $postManager;
         $this->entityManager = $entityManager;
     }
 
     public function indexAction()
     {
-        $form = new PostForm;
         $posts = $this->entityManager->getRepository(Post::class)->findAll();
         return new ViewModel(\compact('form', 'posts'));
     }
@@ -29,28 +31,23 @@ class PostController extends AbstractActionController
     public function addAction()
     {
         $form = new PostForm;
-        $request = $this->getRequest();
-
-        if (!$request->isPost())
-            return \compact('form');
-
-
-        if($this->getRequest()->isPost())
-        {
-            $data=$this->params()->PostForm();
-            dd($data);
+  
+        if ($this->getRequest()->isPost()) {
+            $data = $this->params()->fromPost();
+            $form->setData($data);
+            if ($form->isValid()) {
+                $data = $form->getData();
+                echo '<pre>';
+                print_r($data);
+            }
+            else {     
+                
+            }
         }
-        $post=new Post();
+     
 
-        //$post->setInputFilter($post->getInputFilter());
-        $form->get('submit')->setValue('Submit');
-
-        dd('a');
-
-
-
-
-        return new ViewModel(['form' => $form]);
+        return new ViewModel(compact('form'));
+     
     }
 
     public function deleteAction()

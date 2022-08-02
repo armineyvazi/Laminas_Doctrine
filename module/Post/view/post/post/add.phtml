@@ -3,6 +3,7 @@
 
 $title = 'Add Post';
 $this->headTitle($title);
+
 ?>
 <h1><?= $this->escapeHtml($title) ?></h1>
 <?php
@@ -15,18 +16,22 @@ $this->headTitle($title);
 
 	<div>
 		<?= $this->formHidden($form->get('id'));?>
+		<?= $this->formElementErrors($form->get('id'));?>
 	</div>
 
 	<div>
 		<?= $this->formRow($form->get('title'));?>
+		<?php echo $this->formElementErrors($form->get('title'));?>
 	</div>
 
 	<div>
 		<?= $this->formRow($form->get('category'));?>
+		<?= $this->formElementErrors($form->get('category'));?>
 	</div>
 
 	<div>
 		<?= $this->formRow($form->get('description')); ?>
+		<?= $this->formElementErrors($form->get('description'));?>
 	</div>
 
 
