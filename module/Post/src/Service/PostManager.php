@@ -32,10 +32,8 @@ class PostManager
     public function deletePost(int $id)
     {
         $post=$this->entityManager->find(Post::class,$id);
-       
         if(!is_null($post))
         { 
-           
             $this->entityManager->remove($post);
             $this->entityManager->flush();
 
@@ -44,13 +42,26 @@ class PostManager
         else
             throw new Exception('not found');
     }
-    public function editePost($id)
+    public function find($id)
     {
         $post=$this->entityManager->find(Post::class,$id);
-        if(!is_null($post))
+        
+        return $post ?? false;
+    }
+    public function editPost($id,$data)
+    {
+        // dd($id);
+        $post=$this->find($id);
+        // dd('2');
+        if($post)
         {
-            return $post;
+            $post->setId($data['id']);
+            $post->setTitle($data['title']);
+            $post->setCategory($data['category']);
+            $post->setDescription($data['description']);
+            $this->entityManager->flush();
         }
+    
         
     }
 

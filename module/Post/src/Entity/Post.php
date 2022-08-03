@@ -71,6 +71,11 @@ class Post
     {
         return $this->id;
     }
+    //setId
+    public function setId($id)
+    {
+        $this->id=$id;
+    }
     // Returns title.
     public function getTitle()
     {
