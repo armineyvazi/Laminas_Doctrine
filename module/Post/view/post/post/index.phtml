@@ -3,6 +3,8 @@
 $title = 'My Post';
 $this->headTitle($title);
 ?>
+
+<?php echo $this->flashMessenger()->render('alert',['alert','alert-success']) ?>
 <h1><?= $this->escapeHtml($title) ?></h1>
 <p>
     <a href="<?= $this->url('post', ['action' => 'add']) ?>">Add new album</a>

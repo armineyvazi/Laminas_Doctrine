@@ -74,7 +74,7 @@ class Post
     // Returns title.
     public function getTitle()
     {
-        return $this->id;
+        return $this->title;
     }
     // Sets title.
     public function setTitle($title)

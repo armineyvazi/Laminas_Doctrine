@@ -31,33 +31,46 @@ class PostController extends AbstractActionController
     public function addAction()
     {
         $form = new PostForm;
-  
+
         if ($this->getRequest()->isPost()) {
             $data = $this->params()->fromPost();
             $form->setData($data);
             if ($form->isValid()) {
-                $data = $form->getData();
-                echo '<pre>';
-                print_r($data);
-            }
-            else {     
-                
-            }
-        }
-     
 
-        return new ViewModel(compact('form'));
-     
+                $data = $form->getData();
+              
+                $this->postManager->createPost($data);
+
+                
+                $this->flashMessenger()->addSuccessMessage('Album created successfully.');
+                    
+                return $this->redirect()->toRoute('post');
+
+            }
+    
+        }
+
+        return new ViewModel(\compact('form'));
     }
 
     public function deleteAction()
     {
 
+        $id = $this->params()->fromRoute('id');
+
+        $this->postManager->deletePost($id);
+       
+        return $this->redirect()->toRoute('post');
     }
 
     public function editAction()
     {
+        // $id = $this->params()->fromRoute('id');
 
+        // $post=$this->postManager->editePost($id);
+
+        // return new ViewModel(\compact('post'));
+      
     }
 
 }

@@ -29,7 +29,8 @@
         "laminas/laminas-paginator": "^2.13",
         "doctrine/migrations": "^3.5",
         "laminas/laminas-inputfilter": "^2.19",
-        "laminas/laminas-servicemanager": "^3.16"
+        "laminas/laminas-servicemanager": "^3.16",
+        "laminas/laminas-mvc-plugin-flashmessenger": "^1.8"
     },
     "autoload": {
         "psr-4": {
