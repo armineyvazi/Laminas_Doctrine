@@ -1,31 +1,107 @@
+<script
+  src="https://code.jquery.com/jquery-3.6.0.slim.js"
+  integrity="sha256-HwWONEZrpuoh951cQD1ov2HUK5zA5DwJ1DNUXaM6FsY="
+  crossorigin="anonymous"></script>
+
+  <div class="form-outline mb-4">
+    <input type="search" class="form-control" id="search" name="search" placeholder="Search">
+  </div>
 <?php
+
 // module/Album/view/album/album/index.phtml:
 $title = 'My Post';
 $this->headTitle($title);
 ?>
 
-<?php echo $this->flashMessenger()->render('alert',['alert','alert-success']) ?>
+<?php echo $this->flashMessenger()->render('success',['alert','alert-success']) ?>
+
 <h1><?= $this->escapeHtml($title) ?></h1>
 <p>
     <a href="<?= $this->url('post', ['action' => 'add']) ?>">Add new album</a>
 </p>
 
 <table class="table">
-<tr>
-    <th>Title</th>
-    <th>Category</th>
-    <th>Description</th>
-    <th>&nbsp;</th>
-</tr>
+<thead>
+    <tr>
+        <th>Title</th>
+        <th>Category</th>
+        <th>Description</th>
+        <th>&nbsp;</th>
+    </tr>
+</thead>
+<tbody>
+<?php if(!empty($posts)):?>
 <?php foreach ($posts as $post) : ?>
     <tr>
-        <td><?= $this->escapeHtml($post->getTitle()) ?></td>
-        <td><?= $this->escapeHtml($post->getCategory()) ?></td>
-        <td><?= $this->escapeHtml($post->getDescription()) ?></td>
+        <td><?= $this->escapeHtml($post['title']) ?></td>
+        <td><?= $this->escapeHtml($post['category']) ?></td>
+        <td><?= $this->escapeHtml($post['description']) ?></td>
         <td>
-            <a href="<?= $this->url('post', ['action' => 'edit', 'id' => $post->getId()]) ?>">Edit</a>
-            <a href="<?= $this->url('post', ['action' => 'delete', 'id' => $post->getId()]) ?>">Delete</a>
+            <a href="<?= $this->url('post', ['action' => 'edit', 'id' => $post['id']]) ?>">Edit</a>
+            <a href="<?= $this->url('post', ['action' => 'delete', 'id' => $post['id']]) ?>">Delete</a>
         </td>
     </tr>
 <?php endforeach; ?>
+
+<?php else: for($i=0;$i<1;$i++): ?>
+    <tr>
+        <td><?= $this->escapeHtml("There Is No Post") ?></td>
+        <td><?= $this->escapeHtml("There Is No Post") ?></td>
+        <td><?= $this->escapeHtml("There Is No Post") ?></td>
+    </tr>
+
+<?php endfor;?>
+<?php endif;?>
+</tbody>
 </table>
+
+<script>
+    $(document).ready(function(){  
+
+    $("#search").keyup(function(event){ 
+            $.ajax({
+                url: '/post',
+                type:  'POST',
+                async:  true, 
+                data: {
+                    search:$("#search").val(),
+                },
+                success:function(data, status, xhr){
+                    const tbody=$('.table').children('tbody');
+                    tbody.empty()
+                if( !jQuery.isEmptyObject(data)){   
+                   
+                    $.each(data, function(key, value){
+                        let edit = "<a title=\"Blah\" href=\"http://localhost:6985/post/edit/" + +value['id'] +
+                            "\">Edite<a>";
+                        let delet = "<a title=\"Blah\" href=\"http://localhost:6985/post/delete/" + +value['id'] +
+                            "\">Delete<a>";
+                        console.log(edit);
+                        tbody.append("<tr>\
+                                <td>"+value['title']+"</td>\
+                                <td>"+value['category']+"</td>\
+                                <td>"+value['description']+"</td>\
+                                <td>"+edit+"</td>\
+                                <td>"+delet+"</td>\
+                                </tr>");
+                        });   
+                 }
+                else{
+                    tbody.append("<tr>\
+							<td>"+"NOT FOUND"+"</td>\
+							<td>"+"NOT FOUND"+"</td>\
+							<td>"+"NOT FOUND"+"</td>\
+							</tr>");
+                }   
+                },
+                error: function(data, status, xhr){
+                    alert(status);
+                }
+            });
+        }); 
+        
+    });
+        
+   
+
+</script>
