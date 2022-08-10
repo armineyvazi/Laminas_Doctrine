@@ -85,11 +85,7 @@ class PostForm extends Form
     private function validator()
     {
         $inputFilter = new InputFilter;
-
-
         $this->setInputFilter($inputFilter);
-
-
         $inputFilter->add([
             'name' => 'title',
             'required' => true,
@@ -104,27 +100,26 @@ class PostForm extends Form
                     'name' => 'NotEmpty',
                     'options' => [
                         'break_chain_on_failure' => true,
-                        'message' => [
-                            NotEmpty::IS_EMPTY => 'Title is not Empty',
+                        'messages' => [
+                          NotEmpty::IS_EMPTY => 'Title is not Empty',
                         ]
                     ]
-
                 ],
                 [
                     'name' => 'StringLength',
                     'options' => [
                         'break_chain_on_failure' => true,
-                        'min' => 3,
+                        'min' => 2,
                         'max' => 50,
-                        'message' => [
-                            StringLength::TOO_SHORT => 'String is more than %mnin% ',
+                        'messages' => [
+                            StringLength::TOO_SHORT => 'String is more than %min% ',
                             StringLength::TOO_LONG => 'String most be down than %max%'
                         ]
                     ],
                 ],
             ],
         ]);
-   
+
 
         $inputFilter->add([
             'name' => 'category',
@@ -140,11 +135,10 @@ class PostForm extends Form
                     'name' => 'NotEmpty',
                     'break_chain_on_failure' => true,
                     'options' => [
-                        'message' => [
-                            NotEmpty::IS_EMPTY => 'Title is not Empty',
+                        'messages' => [
+                            NotEmpty::IS_EMPTY => 'category is not Empty',
                         ]
                     ]
-
                 ],
                 [
                     'name' => 'StringLength',
@@ -152,7 +146,7 @@ class PostForm extends Form
                     'options' => [
                         'min' => 3,
                         'max' => 50,
-                        'message' => [
+                        'messages' => [
                             StringLength::TOO_SHORT => 'String is more than %mnin% ',
                             StringLength::TOO_LONG => 'String most be down than %max%'
                         ]
@@ -176,11 +170,10 @@ class PostForm extends Form
                     'name' => 'NotEmpty',
                     'break_chain_on_failure' => true,
                     'options' => [
-                        'message' => [
-                            NotEmpty::IS_EMPTY => 'Title is not Empty',
+                        'messages' => [
+                            NotEmpty::IS_EMPTY => 'description is not Empty',
                         ]
                     ]
-
                 ],
                 [
                     'name' => 'StringLength',
@@ -188,7 +181,7 @@ class PostForm extends Form
                     'options' => [
                         'min' => 3,
                         'max' => 50,
-                        'message' => [
+                        'messages' => [
                             StringLength::TOO_SHORT => 'String is more than %mnin% ',
                             StringLength::TOO_LONG => 'String most be down than %max%'
                         ]
@@ -196,5 +189,9 @@ class PostForm extends Form
                 ],
             ],
         ]);
+
+        $this->inputFilter = $inputFilter;
+        return $this->inputFilter;
+
     }
 }
