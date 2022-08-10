@@ -19,6 +19,7 @@ use DomainException;
  * This class represents a single post in a blog.
  * @ORM\Entity
  * @ORM\Table(name="post")
+ * @ORM\Entity(repositoryClass="Post\Entity\Repository\PostRepository")
  */
 class Post
 
@@ -41,6 +42,7 @@ class Post
      * @ORM\Column(name="description",type="string")  
      */
     protected $description;
+
     public function exchangeArray(array $data)
     {
         $this->id = !empty($data['id']) ? $data['id'] : null;
