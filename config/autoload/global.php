@@ -23,7 +23,7 @@ return [
                   'params' => [
                      'host'     => '127.0.0.1',                    
                      'user'     => 'root',
-                     'password' => 'admin123',
+                     'password' => '1111',
                      'dbname'   => 'album',
                   ]
                ],            
@@ -33,7 +33,7 @@ return [
       'driver'   => 'Pdo',
       'dsn'      => 'mysql:dbname=album;host=localhost;charset=utf8',
       'username' => 'root',
-      'password' => 'admin123',
+      'password' => '1111',
     ],
      'service_manager' => array(
         'factories' => array(
