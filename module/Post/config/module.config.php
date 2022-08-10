@@ -59,9 +59,14 @@ return [
     ],
 
 
-    'view_manager' => [
+    'view_manager' => [ 
+        'template_map' => array
+           ('layout/layout' => __DIR__ . '/../view/post/index.phtml'), 
         'template_path_stack' => [
-            'post' => __DIR__ . '/../view',
+            __DIR__ . '/../view',
         ],
-    ],
+        'strategies' => [
+            'ViewJsonStrategy',
+        ],
+     ],
 ];
