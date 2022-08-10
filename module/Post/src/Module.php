@@ -5,6 +5,7 @@ declare(strict_types = 1)
 
 namespace Post;
 
+use Laminas\Mvc\MvcEvent;
 use Laminas\Db\ResultSet\ResultSet;
 use Post\Controller\PostController;
 use Laminas\Db\Adapter\AdapterInterface;
@@ -20,31 +21,6 @@ class Module implements ConfigProviderInterface
         $config = include __DIR__ . '/../config/module.config.php';
         return $config;
     }
-    // public function getServiceConfig()
-    // {
-    //     return [
-    //         'factories' => [
-    //             Model\AlbumTable::class => function($container) {
-    //                 $tableGateway = $container->get(Model\AlbumTableGateway::class);
-    //                 return new Model\AlbumTable($tableGateway);
-    //             },
-    //             Model\AlbumTableGateway::class => function ($container) {
-    //                 $dbAdapter = $container->get(AdapterInterface::class);
-    //                 $resultSetPrototype = new ResultSet();
-    //                 $resultSetPrototype->setArrayObjectPrototype(new Model\Album());
-    //                 return new TableGateway('album', $dbAdapter, null, $resultSetPrototype);
-    //             },
-    //         ],
-    //     ];
-    // }
-    // public function getControllerConfig()
-    // {
-    //     return [
-    //         'factories' => [
-    //             Controller\PostController::class => InvokableFactory::class ,  // module.config.php
-    //         ],
-    //     ];
-    // }
     public function getAutoloaderConfig()
     {
         return [
@@ -54,5 +30,25 @@ class Module implements ConfigProviderInterface
                 ],
             ],
         ];
+    }
+    public function onBootstrap(MvcEvent $e)
+    {
+        $app = $e->getApplication();
+        $app->getEventManager()->attach('render', [$this, 'registerJsonStrategy'], 100);
+    }
+
+    /**
+     * @param  MvcEvent $e The MvcEvent instance
+     * @return void
+     */
+    public function registerJsonStrategy(MvcEvent $e)
+    {
+        $app          = $e->getTarget();
+        $locator      = $app->getServiceManager();
+        $view         = $locator->get('Laminas\View\View');
+        $jsonStrategy = $locator->get('ViewJsonStrategy');
+
+        // Attach strategy, which is a listener aggregate, at high priority
+        $jsonStrategy->attach($view->getEventManager(), 100);
     }
 }
