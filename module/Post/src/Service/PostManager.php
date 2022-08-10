@@ -4,10 +4,12 @@ namespace Post\Service;
 
 
 use Doctrine\ORM\EntityManager;
+use Exception as GlobalException;
 use Post\Entity\Post;
 use Masterminds\HTML5\Exception;
+use Post\Service\Factory\PostManagerInterface;
 
-class PostManager
+class PostManager implements PostManagerInterface
 {
     protected EntityManager $entityManager;
 
@@ -15,17 +17,15 @@ class PostManager
     {
         $this->entityManager = $entityManager;
     }
-
     public function createPost(array $data)
     {
         $post = new Post;
-
         $post->setTitle($data['title']);
         $post->setCategory($data['category']);
         $post->setDescription($data['description']);
         $this->entityManager->persist($post);
         $this->entityManager->flush();
-
+    
         return $post;
     }
 
@@ -36,7 +36,6 @@ class PostManager
         { 
             $this->entityManager->remove($post);
             $this->entityManager->flush();
-
             return true;
         }
         else
@@ -45,28 +44,42 @@ class PostManager
     public function find($id)
     {
         $post=$this->entityManager->find(Post::class,$id);
-        
         return $post ?? false;
     }
-    public function editPost($id,$data)
+    public function savePost($data,$id=null)
     {
-        // dd($id);
-        $post=$this->find($id);
-        // dd('2');
-        if($post)
-        {
-            $post->setId($data['id']);
+        $post=new Post;
+        if($id==null)
+        {  
             $post->setTitle($data['title']);
             $post->setCategory($data['category']);
             $post->setDescription($data['description']);
+            $this->entityManager->persist($post);
             $this->entityManager->flush();
         }
-    
-        
+        else{
+            if(strlen($data['title'])>=3)
+            {
+                $post=$this->find($id);
+                $post->setId($data['id']);
+                $post->setTitle($data['title']);
+                $post->setCategory($data['category']);
+                $post->setDescription($data['description']);
+                $this->entityManager->flush();
+            }
+        }
+    }
+    public function getAllPost()
+    {
+        return $this->entityManager->getRepository(Post::class)->getAllPost();
     }
 
-
-
-
-
+    public function searchPost($data)
+    {
+        return $this->entityManager->getRepository(Post::class)->searchPost($data);
+    }
+    public function paginate()
+    {
+        
+    }
 }
