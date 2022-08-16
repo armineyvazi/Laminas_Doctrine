@@ -3,12 +3,15 @@
 
 namespace Post;
 
+use Post\Service\Factory\PostManagerFactory;
+
 use Post\Service\PostManager;
+use Post\Entity\Service\PostModelService;
+use Post\Entity\Service\Factory\PostModelServiceFactory;
+
 use Laminas\Router\Http\Segment;
-use Post\Service\Factory\PostMangerFactory;
 use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
 use Post\Controller\Factory\PostControllerFactory;
-use Laminas\ServiceManager\Factory\InvokableFactory;
 
 
 return [
@@ -18,9 +21,13 @@ return [
             Controller\PostController::class => PostControllerFactory::class ,
         ]
     ],
-    'service-manager'=>[
-        'factories'=>[
-            Service\PostManager::class=>PostMangerFactory::class,
+    'service-manager'   =>  [
+        'aliases' => [
+            'PostManager' => PostManager::class
+        ],
+        'factories'         =>  [
+            PostModelService::class     =>  PostModelServiceFactory::class,
+            PostManager::class          =>  PostManagerFactory::class,
         ]
     ],
     // The following section is new and should be added to your file:
@@ -42,7 +49,6 @@ return [
             ],
         ],
     ],
-    // ...
     'doctrine' => [
         'driver' => [
             __NAMESPACE__ . '_driver' => [
@@ -58,15 +64,17 @@ return [
         ],
     ],
 
-
-    'view_manager' => [ 
-        'template_map' => array
-           ('layout/layout' => __DIR__ . '/../view/post/index.phtml'), 
+    'view_manager' => [
+        'template_map' => [
+            'layout'      => __DIR__ . './../view/post/post/index.phtml',
+            'index/index' => __DIR__ . './../view/post/post/index.phtml',
+        ],
         'template_path_stack' => [
-            __DIR__ . '/../view',
+            'application' => __DIR__ . '/../view',
         ],
         'strategies' => [
             'ViewJsonStrategy',
         ],
-     ],
+    ],
+
 ];

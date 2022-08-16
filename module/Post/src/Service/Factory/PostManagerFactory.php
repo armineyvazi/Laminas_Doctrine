@@ -3,20 +3,20 @@
 
 namespace Post\Service\Factory;
 
+
+use Laminas\ServiceManager\Factory\FactoryInterface;
+use Post\Entity\Service\PostModelService;
 use Post\Service\PostManager;
-use Interop\Container\ContainerInterface;
 
-
-class PostMangerFactory
+class PostManagerFactory implements FactoryInterface
 {
 
-    public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
+    public function __invoke(ContainerInterface $container)
     {
         // Create an instance of the class.
-        $doctrineConfig = $container->get('doctrine.entitymanager.orm_default');
-        return new PostManager($doctrineConfig);
+        $postModelService = $container->get(PostModelService::class);
+        return new PostManager($postModelService);
     }
-
 
 
 }

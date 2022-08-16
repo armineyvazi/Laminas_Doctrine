@@ -8,7 +8,6 @@ namespace Post\Controller;
 use Post\Form\PostForm;
 use Post\Form\SearchForm;
 use Post\Service\PostManager;
-use Doctrine\ORM\EntityManager;
 use Masterminds\HTML5\Exception;
 use Laminas\View\Model\JsonModel;
 use Laminas\View\Model\ViewModel;
@@ -16,39 +15,58 @@ use Laminas\Mvc\Controller\AbstractActionController;
 
 class PostController extends AbstractActionController
 {
-
+    protected const  PER_PAGE=5;
+    /**
+     * @var \Post\Service\PostManager $postManager
+     */
     protected PostManager $postManager;
-
-    protected EntityManager $entityManager;
-
-    public function __construct(EntityManager $entityManager, PostManager $postManager)
+    /**
+     * @param \Post\Service\PostManager $postManager
+     * 
+     * @return void
+     */
+    public function __construct(PostManager $postManager)
     {
         $this->postManager = $postManager;
-        $this->entityManager = $entityManager;
     }
-
-    public function indexAction()
+    
+    /**
+     * 
+     * @return ViewModel
+     */
+    public function indexAction():ViewModel
     {
         $form = new SearchForm;
-        $posts= $this->postManager->getAllPost();
         $request = $this->getRequest(); 
         $query = $request->getQuery();    
         if($request->isXmlHttpRequest() || $query->get('showJson') == 1)
         {
+            $string = $_POST['search'];
+
+
+            $params=[
+                'search' => true,
+                'string' =>$string,
+            ];
+
             $query = $request->getQuery(); 
-            $jsonData=[];
-            $count=0;
-            $search = $_POST['search'];
-            $posts = $this->postManager->searchPost($search);
+            $posts = $this->postManager->getPosts($params);
+            $count=$posts['count'][0][1];
+            $posts['page']=ceil(((int)$count)/self::PER_PAGE);
             $view = new JsonModel($posts); 
             $view->setTerminal(true); 
         }
-        else { 
-            $posts = $this->postManager->getAllPost();
-            $view = new ViewModel(compact('form','posts')); 
-        }   
+        else {
+
+            $countResult=$this->postManager->getPosts(['total'=>true]);
+            $posts = $this->postManager->getPosts(['search'=>false]);
+            $posts['page']=ceil((int)$countResult/self::PER_PAGE);
+            $view = new ViewModel(compact('form','posts','countResult')); 
+        }  
+
        return $view;
     }
+
     public function addAction()
     {
         $form = new PostForm;
@@ -64,13 +82,30 @@ class PostController extends AbstractActionController
         }
         return new ViewModel(\compact('form'));
     }
+
+    /**
+     * @return \Laminas\Http\Response
+     */
     public function deleteAction()
     {
+
         $id = $this->params()->fromRoute('id');
-        $this->postManager->deletePost($id);
-        $this->flashMessenger()->addSuccessMessage('Post Deleted Successfully.');
+        if($this->postPlugin($id))
+        {
+            $this->postManager->deletePost($id);
+            $this->flashMessenger()->addSuccessMessage('Post Deleted Successfully.');
+        }
+        else{
+            $this->flashMessenger()->addSuccessMessage('Post Deleted  Not Successfully only deleted by admin.');
+
+        }
         return $this->redirect()->toRoute('post');
+
     }
+
+    /**
+     * @return \Laminas\Http\Response
+     */
     public function editAction()
     {
         $form = new PostForm;

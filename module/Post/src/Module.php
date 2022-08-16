@@ -6,12 +6,11 @@ declare(strict_types = 1)
 namespace Post;
 
 use Laminas\Mvc\MvcEvent;
-use Laminas\Db\ResultSet\ResultSet;
-use Post\Controller\PostController;
-use Laminas\Db\Adapter\AdapterInterface;
-use Laminas\Db\TableGateway\TableGateway;
 use Laminas\ServiceManager\Factory\InvokableFactory;
 use Laminas\ModuleManager\Feature\ConfigProviderInterface;
+use Post\Plugin\Factory\PostPluginFactory;
+use Post\Plugin\PostPlugin;
+use Post\view\Helper\PostHelper;
 
 class Module implements ConfigProviderInterface
 {
@@ -21,16 +20,17 @@ class Module implements ConfigProviderInterface
         $config = include __DIR__ . '/../config/module.config.php';
         return $config;
     }
-    public function getAutoloaderConfig()
-    {
-        return [
-            'Zend\Loader\StandardAutoloader' => [
-                'namespace' => [
-                    __NAMESPACE__ => __DIR__ . '/src/' . __NAMESPACE__
-                ],
-            ],
-        ];
-    }
+
+//    public function getAutoloaderConfig()
+//    {
+//        return [
+//            'Zend\Loader\StandardAutoloader' => [
+//                'namespace' => [
+//                    __NAMESPACE__ => __DIR__ . '/src/' . __NAMESPACE__
+//                ],
+//            ],
+//        ];
+//    }
     public function onBootstrap(MvcEvent $e)
     {
         $app = $e->getApplication();
@@ -50,5 +50,27 @@ class Module implements ConfigProviderInterface
 
         // Attach strategy, which is a listener aggregate, at high priority
         $jsonStrategy->attach($view->getEventManager(), 100);
+    }
+    public function  getControllerPluginConfig()
+    {
+        return [
+            'aliases'       =>[
+                'postPlugin'      =>  PostPlugin::class,
+            ],
+            'factories'    => [
+                PostPlugin::class => PostPluginFactory::class,
+            ]
+        ];
+    }
+    public function getViewHelperConfig()
+    {
+        return [
+            'aliases'   =>  [
+                'postHelper'    => PostHelper::class,
+            ],
+            'factories' =>  [
+                PostHelper::class => PostPluginFactory::class,
+            ]
+        ];
     }
 }

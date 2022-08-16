@@ -8,11 +8,10 @@
   </div>
 <?php
 
-// module/Album/view/album/album/index.phtml:
+
 $title = 'My Post';
 $this->headTitle($title);
 ?>
-
 <?php echo $this->flashMessenger()->render('success',['alert','alert-success']) ?>
 
 <h1><?= $this->escapeHtml($title) ?></h1>
@@ -21,87 +20,51 @@ $this->headTitle($title);
 </p>
 
 <table class="table">
-<thead>
-    <tr>
-        <th>Title</th>
-        <th>Category</th>
-        <th>Description</th>
-        <th>&nbsp;</th>
-    </tr>
-</thead>
-<tbody>
-<?php if(!empty($posts)):?>
-<?php foreach ($posts as $post) : ?>
-    <tr>
-        <td><?= $this->escapeHtml($post['title']) ?></td>
-        <td><?= $this->escapeHtml($post['category']) ?></td>
-        <td><?= $this->escapeHtml($post['description']) ?></td>
-        <td>
-            <a href="<?= $this->url('post', ['action' => 'edit', 'id' => $post['id']]) ?>">Edit</a>
-            <a href="<?= $this->url('post', ['action' => 'delete', 'id' => $post['id']]) ?>">Delete</a>
-        </td>
-    </tr>
-<?php endforeach; ?>
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Category</th>
+                <th>Description</th>
+                <th>&nbsp;</th>
+            </tr>
+        </thead>
+    <tbody>
+        <?php if(!empty($posts)):?>
+        <?php for($i=0;$i<count($posts)-1;$i++) : ?>
+            <tr>
+                <td><?= $this->escapeHtml($posts[$i]['title']) ?></td>
+                <td><?= $this->escapeHtml($posts[$i]['category']) ?></td>
+                <td><?= $this->escapeHtml($posts[$i]['description']) ?></td>
+                <?php if($this->postHelper((int)$posts[$i]['id'])){?>
+                <td>
+                    <a href="<?= $this->url('post', ['action' => 'edit', 'id' => $posts[$i]['id']]) ?>">Edit</a>
+                    <a href="<?= $this->url('post', ['action' => 'delete', 'id' => $posts[$i]['id']]) ?>">Delete</a>
+                </td>
+                <?php } else{ ?>
+                    <td>
+                        <p href="">only edited by admin</p>
+                        <p href="">only deleted by admin</p>
+                    </td>
+                <?php  } ?>
 
-<?php else: for($i=0;$i<1;$i++): ?>
-    <tr>
-        <td><?= $this->escapeHtml("There Is No Post") ?></td>
-        <td><?= $this->escapeHtml("There Is No Post") ?></td>
-        <td><?= $this->escapeHtml("There Is No Post") ?></td>
-    </tr>
-
-<?php endfor;?>
-<?php endif;?>
-</tbody>
+            </tr>
+        <?php endfor; ?>
+        <?php else: for($i=0;$i<1;$i++): ?>
+            <tr>
+                <td><?= $this->escapeHtml ("There Is No Post") ?></td>
+                <td><?= $this->escapeHtml ("There Is No Post") ?></td>
+                <td><?= $this->escapeHtml ("There Is No Post") ?></td>
+            </tr>
+        <?php endfor;?>
+        <?php endif;?>
+    </tbody>
 </table>
-
-<script>
-    $(document).ready(function(){  
-
-    $("#search").keyup(function(event){ 
-            $.ajax({
-                url: '/post',
-                type:  'POST',
-                async:  true, 
-                data: {
-                    search:$("#search").val(),
-                },
-                success:function(data, status, xhr){
-                    const tbody=$('.table').children('tbody');
-                    tbody.empty()
-                if( !jQuery.isEmptyObject(data)){   
-                   
-                    $.each(data, function(key, value){
-                        let edit = "<a title=\"Blah\" href=\"http://localhost:6985/post/edit/" + +value['id'] +
-                            "\">Edite<a>";
-                        let delet = "<a title=\"Blah\" href=\"http://localhost:6985/post/delete/" + +value['id'] +
-                            "\">Delete<a>";
-                        console.log(edit);
-                        tbody.append("<tr>\
-                                <td>"+value['title']+"</td>\
-                                <td>"+value['category']+"</td>\
-                                <td>"+value['description']+"</td>\
-                                <td>"+edit+"</td>\
-                                <td>"+delet+"</td>\
-                                </tr>");
-                        });   
-                 }
-                else{
-                    tbody.append("<tr>\
-							<td>"+"NOT FOUND"+"</td>\
-							<td>"+"NOT FOUND"+"</td>\
-							<td>"+"NOT FOUND"+"</td>\
-							</tr>");
-                }   
-                },
-                error: function(data, status, xhr){
-                    alert(status);
-                }
-            });
-        }); 
-        
-    });
-        
-   
-
-</script>
+    <nav aria-label="Page navigation example">
+    
+        <ul class="pagination">
+            <?php for($i=0;$i<(int)$posts['page'];$i++):?>
+                <li class="page-item"><a class="page-link" href="http://localhost:8080/post?page=<?=$i+1?>"><?= $i+1?></a></li>
+            <?php endfor;?>
+        </ul>
+    </nav>
+<script src="/js/post.js"></script>

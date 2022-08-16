@@ -12,9 +12,8 @@ class PostControllerFactory implements PostControllerInterface
     public function __invoke(ContainerInterface $container, $requestedName, array $options = null)
     {
         // Create an instance of the class.
-        $doctrineConfig = $container->get('doctrine.entitymanager.orm_default');
-        $postManger=$container->get(PostManager::class,$doctrineConfig);
-        return new PostController($doctrineConfig,$postManger);
+        $postManger=$container->get(PostManager::class);
+        return new PostController($postManger);
 
     }
 }

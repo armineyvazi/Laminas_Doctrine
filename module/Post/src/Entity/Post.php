@@ -4,25 +4,16 @@
 namespace Post\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Console\Input\Input;
 use Laminas\InputFilter\InputFilterInterface;
-use Laminas\Filter\StringTrim;
-use Laminas\Filter\StripTags;
-use Laminas\Filter\ToInt;
-use Laminas\InputFilter\InputFilter;
-use Laminas\InputFilter\InputFilterAwareInterface;
-use Laminas\Validator\StringLength;
 
 use DomainException;
 
 /**
  * This class represents a single post in a blog.
- * @ORM\Entity
  * @ORM\Table(name="post")
- * @ORM\Entity(repositoryClass="Post\Entity\Repository\PostRepository")
+ * @ORM\Entity (repositoryClass="Post\Entity\Repository\PostRepository")
  */
 class Post
-
 {
     /**
      * @ORM\Id
@@ -42,6 +33,10 @@ class Post
      * @ORM\Column(name="description",type="string")  
      */
     protected $description;
+    /** 
+     * @ORM\Column(name="role",type="boolean")  
+     */
+    protected $role;
 
     public function exchangeArray(array $data)
     {

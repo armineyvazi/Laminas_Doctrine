@@ -3,61 +3,69 @@
 namespace Post\Service;
 
 
-use Doctrine\ORM\EntityManager;
-use Exception as GlobalException;
 use Post\Entity\Post;
+use Doctrine\ORM\EntityManager;
 use Masterminds\HTML5\Exception;
-use Post\Service\Factory\PostManagerInterface;
+use Post\Entity\Service\PostModelService;
 
 class PostManager implements PostManagerInterface
 {
-    protected EntityManager $entityManager;
-
-    public function __construct(EntityManager $entityManager)
+    protected PostModelService $postModelService;
+    /**
+     * @return void
+     */
+    public function __construct(PostModelService $postModelService)
     {
-        $this->entityManager = $entityManager;
+        $this->postModelService = $postModelService;
     }
-    public function createPost(array $data)
+    /**
+     * 
+     * @param int $id
+     * 
+     * @return bool
+     */
+    public function deletePost(int $id):bool
     {
-        $post = new Post;
-        $post->setTitle($data['title']);
-        $post->setCategory($data['category']);
-        $post->setDescription($data['description']);
-        $this->entityManager->persist($post);
-        $this->entityManager->flush();
-    
-        return $post;
-    }
-
-    public function deletePost(int $id)
-    {
-        $post=$this->entityManager->find(Post::class,$id);
-        if(!is_null($post))
+        $post=$this->postModelService->find(Post::class,$id);
+        if(!is_null($post) and $this->postModelService->getPostRepository()->checkRole($id) )
         { 
-            $this->entityManager->remove($post);
-            $this->entityManager->flush();
+            $this->postModelService->remove($post);
+            $this->postModelService->flush();
             return true;
         }
         else
             throw new Exception('not found');
     }
-    public function find($id)
+    /**
+     * 
+     * @param mixed $id
+     * 
+     * @return object|false
+     */
+    public function find($id):object
     {
-        $post=$this->entityManager->find(Post::class,$id);
+        $post=$this->postModelService->find(Post::class,$id);
         return $post ?? false;
     }
-    public function savePost($data,$id=null)
+    /**
+     * @param mixed $data
+     * 
+     * @param mixed $id
+     * 
+     * @return void
+     */
+    public function savePost($data,$id=null):void
     {
         $post=new Post;
-        if($id==null)
+        if(is_null($id))
         {  
             $post->setTitle($data['title']);
             $post->setCategory($data['category']);
             $post->setDescription($data['description']);
-            $this->entityManager->persist($post);
-            $this->entityManager->flush();
+            $this->postModelService->persist($post);
+            $this->postModelService->flush();
         }
-        else{
+        else if(!is_null($id) and $this->postModelService->getPostRepository()->checkRole($id)){
             if(strlen($data['title'])>=3)
             {
                 $post=$this->find($id);
@@ -65,21 +73,25 @@ class PostManager implements PostManagerInterface
                 $post->setTitle($data['title']);
                 $post->setCategory($data['category']);
                 $post->setDescription($data['description']);
-                $this->entityManager->flush();
+                $this->postModelService->flush();
             }
         }
     }
-    public function getAllPost()
+    /**
+     * @return mixed
+     */
+    public function count()
     {
-        return $this->entityManager->getRepository(Post::class)->getAllPost();
+        return $this->postModelService->getPostRepository()->countPost();
     }
-
-    public function searchPost($data)
+    /**
+     *          
+     * @param array $params
+     * 
+     * @return mixed
+     */
+    public function getPosts($params=[])
     {
-        return $this->entityManager->getRepository(Post::class)->searchPost($data);
-    }
-    public function paginate()
-    {
-        
+        return $this->postModelService->getPostRepository()->getPosts($params);
     }
 }
